@@ -15,7 +15,7 @@ Base = mapper_registry.generate_base()
 # ANOTHER WAY TO GET THE DECLARATIVE BASE IS AS FOLLOWS
 Base = declarative_base()
 
-
+# A BI-DIRECTIONAL RELATIONSHIP IS ALSO DEMONSTRATED
 class User(Base):
     __tablename__ = "user_account"
 
@@ -41,3 +41,7 @@ class Address(Base):
 
     def __repr__(self) -> str:
         return f"Address(id={self.id}, email_address={self.email_address})"
+
+user = User(name='Eren', fullname = 'Eren Krueger')
+
+# CREATING THE TABLE 
