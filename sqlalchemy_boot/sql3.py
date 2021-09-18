@@ -2,9 +2,13 @@ from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, declarative_base, relationship
 
+engine = create_engine("sqlite:///:memory:", future=True, echo=True)
+
 # CREATING MAPPED CLASSES INSTEAD OF SIMPLE TABLE OBJECTS
 
+
 mapper_registry = registry()
+
 
 print(mapper_registry.metadata)
 
@@ -42,6 +46,14 @@ class Address(Base):
     def __repr__(self) -> str:
         return f"Address(id={self.id}, email_address={self.email_address})"
 
-user = User(name='Eren', fullname = 'Eren Krueger')
 
-# CREATING THE TABLE 
+user = User(name="Eren", fullname="Eren Krueger")
+
+print(user)
+
+# CREATING THE TABLE
+
+mapper_registry.metadata.create_all(engine)
+
+# OR
+Base.metadata.create_all(engine)

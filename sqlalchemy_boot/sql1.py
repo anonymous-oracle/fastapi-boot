@@ -91,3 +91,4 @@ with Session(engine) as sess:
         [{"x": 1, "y": 3}, {"x": 2, "y": 6}],
     )
     sess.commit()
+
