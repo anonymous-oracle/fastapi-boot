@@ -1,9 +1,12 @@
+from operator import and_, or_
 from sqlalchemy import Integer, Column, String, ForeignKey
-from sqlalchemy import create_engine, insert
+from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import registry, declarative_base, relationship, Session
+from sqlalchemy.sql.elements import literal_column
+from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.schema import Table
 
-engine = create_engine("sqlite:///:memory:", future=True, echo=True)
+engine = create_engine("sqlite:///:memory:", future=True, echo=False)
 session = Session(engine)
 Base = declarative_base()
 
@@ -37,7 +40,7 @@ class Address(Base):
 
 
 Base.metadata.create_all(engine)
-
+print()
 
 # INSERTING THE DATA
 stmt = insert(User).values(name="Eren", fullname="Eren Kruger")
@@ -45,6 +48,7 @@ stmt = insert(User).values(name="Eren", fullname="Eren Kruger")
 compiled = stmt.compile()
 
 print(compiled.params)
+print()
 
 # ANOTHER WAY WE CAN INSERT DATA
 with engine.connect() as conn:
@@ -52,6 +56,7 @@ with engine.connect() as conn:
     conn.commit()
 
 print(result.inserted_primary_key)
+print()
 
 with engine.connect() as conn:
     result = conn.execute(
@@ -62,7 +67,7 @@ with engine.connect() as conn:
         ],
     )
     conn.commit()
-
+print()
 
 # RETURNING INSERTED VALUES
 insert_stmt = (
@@ -71,3 +76,97 @@ insert_stmt = (
     .returning(Address.id, Address.email_address)
 )
 print(insert_stmt)
+print()
+
+# SELECTING ROWS
+stmt = select(User).where(User.name == "Eren")
+print(stmt)
+print()
+
+# USING engine.connect()
+with engine.connect() as conn:
+    for row in conn.execute(stmt):
+        print(row)
+print()
+
+# USING Session object
+with Session(engine) as sess:
+    for row in sess.execute(stmt):
+        print(row)
+print()
+
+# SELECTING SPECIFIC COLUMNS
+print(select(User.name, User.fullname))
+print()
+
+# SELECTING ORM ENTITIES AND COLUMNS
+print(select(User))
+print()
+with Session(engine) as sess:
+    # this would be the same as 'select * from user_account limit 1'
+    row = sess.execute(select(User)).first()
+    print(row[0])
+print()
+
+# SELECTING USING ORM CLAUSES
+stmt = select(User).where(User.name == "Eren").order_by(User.name)
+print(stmt)
+print()
+with Session(engine) as sess:
+    print(sess.execute(stmt).all())
+print()
+
+# LABELLING QUERY RESULTS
+stmt = select(("Username: " + User.name).label("username")).order_by(User.name)
+with Session(engine) as sess:
+    for row in sess.execute(stmt):
+        # the .username refers to the label name given in the .label method
+        print(f"{row.username}")
+print()
+
+# GENERATING CONSTANT SQL EXPRESSIONS
+
+# Note: make sure that the constant expression is further enclosed within single quotes
+stmt = select(text("'CONSTANT_EXPRESSION'"), User.name, User.fullname).order_by(
+    User.name
+)
+with engine.connect() as conn:
+    for row in conn.execute(stmt).all():
+        print(f"{row}")
+
+# Since we represented a single column, we can use another function instead of text()
+stmt = select(
+    literal_column("'CONTANT_EXPRESSION'"), User.name, User.fullname
+).order_by(User.name)
+with engine.connect() as conn:
+    for row in conn.execute(stmt).all():
+        print(f"{row}")
+print()
+
+# WHERE CLAUSE
+print(User.id > 2)
+
+print(User.name == "Eren")
+
+print()
+print(select(User).where(User.id > 1).where(User.id < 4))
+
+# OR
+print()
+print(select(User).where(User.id > 1, User.id < 4))
+print()
+
+# AND and OR conjunctions
+stmt = select(User).where(and_(User.name == "Eren", or_(User.id > 1, User.id < 4)))
+print(stmt)
+with engine.connect() as conn:
+    print(conn.execute(stmt).all())
+print()
+
+# FILTER BY CLAUSE
+stmt = select(User).filter_by(name="Eren", id=1)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row[0])
+print()
