@@ -330,5 +330,6 @@ conn.execute(
 )
 conn.commit()
 print(conn.execute(select(User)).all())
+print()
 
 # DELETE ROWS
