@@ -3,7 +3,7 @@ from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import registry, declarative_base, relationship, Session
 from sqlalchemy.sql.elements import literal_column
-from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.expression import desc, text
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import Table
 
@@ -216,9 +216,11 @@ with Session(engine) as sess:
 print()
 
 # JOIN STATEMENTS: TYPE 3
-stmt = select(
-    User.name, User.fullname, Address.email_address, User.id, Address.user_id
-).select_from(User).join(Address)
+stmt = (
+    select(User.name, User.fullname, Address.email_address, User.id, Address.user_id)
+    .select_from(User)
+    .join(Address)
+)
 print(stmt)
 with Session(engine) as sess:
     for row in sess.execute(stmt).all():
@@ -226,7 +228,7 @@ with Session(engine) as sess:
 print()
 
 # AN AGGREGATOR FUNCTION
-stmt = select(func.count('*')).select_from(User)
+stmt = select(func.count("*")).select_from(User)
 print(stmt)
 with engine.connect() as conn:
     for row in conn.execute(stmt).all():
@@ -234,9 +236,61 @@ with engine.connect() as conn:
 print()
 
 # JOIN STATEMENTS: TYPE 4 - SETTING THE ON CLAUSE
-stmt = select(
-    User.name, User.fullname, Address.email_address, User.id, Address.user_id
-).select_from(User).join(Address)
+stmt = (
+    select(
+        User.name,
+        User.fullname,
+        Address.email_address,
+        Address.id,
+        User.id,
+        Address.user_id,
+    )
+    .select_from(User)
+    .join(Address, User.id == Address.id)
+)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
+print()
+
+# OUTER JOIN
+print(select(User).join(Address, isouter=True))
+print()
+
+# FULL JOIN
+print(select(User).join(Address, full=True))
+print()
+
+# ORDER BY
+print(select(User).order_by(User.name))
+print(select(User).order_by(User.name.desc()))
+print()
+
+# GROUP BY
+count_qry = select(func.count(User.id))
+print(count_qry)
+print()
+
+stmt = (
+    select(User.name, func.count(Address.id).label("count"))
+    .join(Address)
+    .group_by(User.name)
+    .having(func.count(Address.id > 1))
+)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
+print()
+
+# ORDER BY WITH GROUP BY
+stmt = (
+    select(User.name, func.count(Address.id).label("count"))
+    .join(Address)
+    .group_by(User.name)
+    .order_by(Address.user_id, desc("count"))
+)
 print(stmt)
 with Session(engine) as sess:
     for row in sess.execute(stmt).all():
