@@ -3,7 +3,7 @@ from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import registry, declarative_base, relationship, Session
 from sqlalchemy.sql.elements import literal_column
-from sqlalchemy.sql.expression import desc, text
+from sqlalchemy.sql.expression import bindparam, desc, text, update
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import Table
 
@@ -44,7 +44,7 @@ Base.metadata.create_all(engine)
 print()
 
 # INSERTING THE DATA
-stmt = insert(User).values(name="Eren", fullname="Eren Kruger")
+stmt = insert(User).values(name="Theo", fullname="Theo Magath")
 
 compiled = stmt.compile()
 
@@ -65,6 +65,7 @@ with engine.connect() as conn:
         [
             {"name": "Grisha", "fullname": "Grisha Jaeger"},
             {"name": "Eren", "fullname": "Eren Jaeger"},
+            {"name": "Armin", "fullname": "Armin Arlert"},
         ],
     )
 
@@ -296,3 +297,38 @@ with Session(engine) as sess:
     for row in sess.execute(stmt).all():
         print(row)
 print()
+
+# UPDATING ROWS
+conn = engine.connect()
+stmt = update(User).where(User.id == 1).values(name="Levi", fullname="Levi Ackerman")
+print("BEFORE UPDATE")
+print(conn.execute(select(User)).all())
+conn.execute(stmt)
+conn.commit()
+print("AFTER UPDATE")
+print(conn.execute(select(User)).all())
+print()
+
+# UPDATING ROWS
+stmt = update(User).values(fullname="Username: " + User.name)
+print(stmt)
+
+# UPDATING MULTIPLE ROWS
+stmt = (
+    update(User)
+    .where(User.name == bindparam("oldname"))
+    .values(name=bindparam("newname"))
+)
+
+conn.execute(
+    stmt,
+    [
+        {"oldname": "Eren", "newname": "Bertholdt"},
+        {"oldname": "Grisha", "newname": "Erwin"},
+        {"oldname": "Theo", "newname": "Levi"},
+    ],
+)
+conn.commit()
+print(conn.execute(select(User)).all())
+
+# DELETE ROWS
