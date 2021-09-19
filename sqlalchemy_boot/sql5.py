@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import registry, declarative_base, relationship, Session
 from sqlalchemy.sql.elements import literal_column
 from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import Table
 
 engine = create_engine("sqlite:///:memory:", future=True, echo=False)
@@ -66,6 +67,21 @@ with engine.connect() as conn:
             {"name": "Eren", "fullname": "Eren Jaeger"},
         ],
     )
+
+    conn.execute(
+        insert(Address),
+        [
+            {
+                "email_address": "eren@marley.com",
+                "user_id": 3,
+            },
+            {
+                "email_address": "eren@paradis.com",
+                "user_id": 1,
+            },
+        ],
+    )
+
     conn.commit()
 print()
 
@@ -169,4 +185,60 @@ print(stmt)
 with Session(engine) as sess:
     for row in sess.execute(stmt).all():
         print(row[0])
+print()
+
+# TEST
+stmt = select(Address)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row[0].user_id)
+print()
+
+# JOIN STATEMENTS: TYPE 1
+stmt = select(
+    User.name, User.fullname, Address.email_address, User.id, Address.user_id
+).join_from(User, Address)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
+print()
+
+# JOIN STATEMENTS: TYPE 2
+stmt = select(
+    User.name, User.fullname, Address.email_address, User.id, Address.user_id
+).join(Address)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
+print()
+
+# JOIN STATEMENTS: TYPE 3
+stmt = select(
+    User.name, User.fullname, Address.email_address, User.id, Address.user_id
+).select_from(User).join(Address)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
+print()
+
+# AN AGGREGATOR FUNCTION
+stmt = select(func.count('*')).select_from(User)
+print(stmt)
+with engine.connect() as conn:
+    for row in conn.execute(stmt).all():
+        print(row)
+print()
+
+# JOIN STATEMENTS: TYPE 4 - SETTING THE ON CLAUSE
+stmt = select(
+    User.name, User.fullname, Address.email_address, User.id, Address.user_id
+).select_from(User).join(Address)
+print(stmt)
+with Session(engine) as sess:
+    for row in sess.execute(stmt).all():
+        print(row)
 print()
