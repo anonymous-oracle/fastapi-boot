@@ -3,7 +3,7 @@ from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import registry, declarative_base, relationship, Session
 from sqlalchemy.sql.elements import literal_column
-from sqlalchemy.sql.expression import bindparam, desc, text, update
+from sqlalchemy.sql.expression import bindparam, delete, desc, text, update
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import Table
 
@@ -333,3 +333,17 @@ print(conn.execute(select(User)).all())
 print()
 
 # DELETE ROWS
+# stmt = delete(User).where(User.name == "Bertholdt")
+# OR
+stmt = (
+    delete(User).where(or_(User.name == "Bertholdt", User.id == 2)).where(User.id == 3)
+)
+# OR
+# stmt = delete(User).where(User.name == bindparam("delete_name"))
+print(stmt)
+conn.execute(stmt, [{"delete_name": "Bertholdt"}])
+conn.commit()
+print(conn.execute(select(User)).all())
+print()
+
+# DELETE ROWS WITH MULTIPLE CONDITIONS
