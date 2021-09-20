@@ -2,3 +2,5 @@ fastapi[all]
 Werkzeug
 asgiref
 SQLAlchemy
+pymysql
+mysql-connector-python
