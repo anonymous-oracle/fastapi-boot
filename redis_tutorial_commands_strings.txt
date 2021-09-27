@@ -1,0 +1,64 @@
+set name Naruto
+get name
+set email naruto@konoha.com
+get email
+GETRANGE email 1 7
+GETRANGE email 0 7
+GETRANGE email 0 5
+ls
+set email naruto@konoha.com
+set name naruto
+get name
+get email
+getrange email 0 6
+getrange email 0 5
+STRLEN email
+STRLEN name
+mset technology redis language english
+get language
+get technology
+MGET language technology
+STRLEN language
+set name "sasuke uchiha"
+get name
+set count 1
+get count
+INCR count
+INCRBY count 10
+decr count 
+DECRBY count
+DECRBY count 10
+set pi 3.14
+set a 1
+get a
+expire a 10
+ttl a
+set a 1
+expire a 10
+ttl a
+SETEX b 10 'anyvalue'
+ttl b
+keys
+keys *
+FLUSHALL
+keys *
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+LRANGE shinobi 0 -1
+LRANGE shinobi 0 3
+LRANGE shinobi 0 1
+LRANGE shinobi 0 -1
+rpush shinobi hagoromo hamura ishhiki momoshiki
+LRANGE shinobi 0 -1
+lpop shinobi
+rpop shinobi
+lpop shinobi
+rpop shinobi
+LRANGE shinobi 0 -1
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi hagoromo hamura ishhiki momoshiki
+LRANGE shinobi 0 -1
+rpop shinobi
+lpop shinobi
+LRANGE shinobi 0 -1
+lset shinobi 5 "Naruto Uzumaki"
+LRANGE shinobi 0 -1
