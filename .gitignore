@@ -221,3 +221,4 @@ workspace.code-workspace
 *.wav
 *.yaml
 *.ckpt
+*env*

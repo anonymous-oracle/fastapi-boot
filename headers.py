@@ -1,3 +1,0 @@
-ENRL = "ENRL"
-INFR = "INFR"
-RENRL = "RENRL"

@@ -1,0 +1,66 @@
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi hagoromo hamura ishhiki momoshiki
+LRANGE shinobi 0 -1
+rpop shinobi
+lpop shinobi
+LRANGE shinobi 0 -1
+lset shinobi 5 "Naruto Uzumaki"
+LRANGE shinobi 0 -1
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi hagoromo hamura ishhiki momoshiki
+rpop shinobi
+lpop shinobi
+lset shinobi 5 "Naruto Uzumaki"
+LINSERT shinobi before "hagoromo" "Jiraiya"
+LRANGE shinobi 0 -1
+rpop shinobi 16
+LRANGE shinobi 0 -1
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi hagoromo hamura ishhiki momoshiki
+LINSERT shinobi before "hagoromo" "Jiraiya"
+LINSERT shinobi after "hagoromo" "Asuma"
+LRANGE shinobi 0 -1
+lindex country 3
+lindex shinobi 3
+lindex shinobi 2
+lpushx jutsu rasengan
+lpushx shinobi nagato
+lindex shinobi 0
+LPOP shinobi 
+lpushx shinobi Nagato
+LRANGE shinobi 0 -1
+rpushx jutsu chidori
+sort shinobi alpha
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi Hagoromo Hamura Ishhiki Momoshiki
+LINSERT shinobi before "Hagoromo" "Jiraiya"
+LINSERT shinobi after "Hagoromo" "Asuma"
+lpushx shinobi Nagato
+sort shinobi alpha
+rpop shinobi 24
+LRANGE shinobi 0 -1
+lpush shinobi Naruto Kakashi Bee Itachi Tobirama
+rpush shinobi Hagoromo Hamura Ishhiki Momoshiki
+LINSERT shinobi before "Hagoromo" "Jiraiya"
+LINSERT shinobi after "Hagoromo" "Asuma"
+lpushx shinobi Nagato
+sort shinobi alpha
+sort shinobi desc alpha
+sadd jutsu Rasengan
+sadd jutsu Chidori Raikiri "Goka Mekyahku"
+smembers jutsu
+sadd jutsu Chidori Raikiri "Goka Mekyahku"
+smembers jutsu
+scard jutsu
+sismember Rasengan jutsu
+sismember jutsu Rasengan
+sadd jutsu2 "Jukai Kotan" "Shinsu Senju" "Rasengan" "Chidori" "Rashomon"
+smembers jutsu2
+SDIFF jutsu jutsu2
+SDIFF jutsu2 jutsu
+sdiffstore diff_jutsu jutsu jutsu2
+sdiffstore diff_jutsu jutsu2 jutsu
+smembers diff_jutsu
+SINTER jutsu jutsu2
+SINTERSTORE inter_jutsu jutsu jutsu2
+SMEMBERS inter_jutsu
