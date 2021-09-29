@@ -32,6 +32,7 @@ async def read_user(user_id: str):
 # Otherwise, the path for /users/{user_id} would match also for /users/me, "thinking" that it's receiving a parameter user_id with a value of "me"
 
 # QUERY PARAMS - predefined params, know what is allowed to be passed; Optional is a param which can be given a default value and not be passed
+
 @app.get("/query_params")
 async def get_params(param1: int, param2: int, opt: Optional[str] = None):
     return {"param1": param1, "param2": param2, "opt": opt}
