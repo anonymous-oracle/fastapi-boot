@@ -20,7 +20,6 @@ async def read_file(file_path: str):
 
 @app.get("/users/me")
 async def read_user_me():
-
     return {"user_id": "the current user"}
 
 
@@ -33,6 +32,15 @@ async def read_user(user_id: str):
 
 # QUERY PARAMS - predefined params, know what is allowed to be passed; Optional is a param which can be given a default value and not be passed
 
+
 @app.get("/query_params")
 async def get_params(param1: int, param2: int, opt: Optional[str] = None):
     return {"param1": param1, "param2": param2, "opt": opt}
+
+
+# QUERY PARAMS - TYPE CONVERSION
+@app.get("/get_params2")
+async def get_params2(
+    param1: int, param2: int, param3: bool = False, opt: Optional[str] = None
+):
+    return {"param1": param1, "param2": param2, "param3": param3, "opt": opt}
