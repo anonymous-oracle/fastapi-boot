@@ -39,8 +39,16 @@ async def get_params(param1: int, param2: int, opt: Optional[str] = None):
 
 
 # QUERY PARAMS - TYPE CONVERSION
-@app.get("/get_params2")
+@app.get("/query_params2")
 async def get_params2(
     param1: int, param2: int, param3: bool = False, opt: Optional[str] = None
 ):
     return {"param1": param1, "param2": param2, "param3": param3, "opt": opt}
+
+
+# multiple path variables
+@app.get("/user/{user_id}/login/{password}")
+async def get_params2(
+    user_id: int, password: str, param3: bool = False, opt: Optional[str] = None
+):
+    return {"user_id": user_id, "password": password, "param3": param3, "opt": opt}
