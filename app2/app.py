@@ -1,4 +1,6 @@
+from typing import Optional
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -8,7 +10,8 @@ async def index(limit, published: bool):  # accept query parameters
     if published:
         return {"data": [f"{limit} published blogs from db"]}
     else:
-        return {'data':[f"{limit} blogs from db"]}
+        return {"data": [f"{limit} blogs from db"]}
+
 
 @app.get("/blog/unpublished")
 async def unpublished():
@@ -26,3 +29,14 @@ async def show(blog_id: int):
 async def comments(blog_id: int):
     # get comments for blog with id = blog_id
     return {"blog_id": blog_id, "comments": ["comments"]}
+
+
+class Blog(BaseModel):
+    title: str
+    body: str
+    published: Optional[bool]
+
+
+@app.post("/blog")
+def create_blog(request: Blog):
+    return {"data": f"blog created with title as {request.title}"}
