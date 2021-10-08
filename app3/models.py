@@ -1,5 +1,8 @@
+from sqlalchemy.sql.schema import ForeignKey
 from database import Base
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
 
 
 class Blog(Base):
@@ -7,6 +10,8 @@ class Blog(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)
     body = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", backref="users")
 
 
 class User(Base):
