@@ -7,6 +7,12 @@ class BlogBase(BaseModel):
     body: str
 
 
+class UserBase(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
 class Blog(BlogBase):
     title: str
     body: str
@@ -16,11 +22,7 @@ class Blog(BlogBase):
         orm_mode = True
 
 
-class User(BaseModel):
-    name: str
-    email: str
-    password: str
-
+class User(UserBase):
     class Config:
         orm_mode = True
 

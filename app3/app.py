@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import FastAPI, status, Response
 from fastapi.exceptions import HTTPException
+from sqlalchemy.sql.functions import user
 from hashing import hash
 import schemas
 from models import Base, Blog, User
@@ -15,7 +16,7 @@ db = session_
 
 @app.post("/blog", status_code=status.HTTP_201_CREATED, tags=["BLOGS"])
 async def create(request: schemas.Blog):
-    new_blog = Blog(title=request.title, body=request.body)
+    new_blog = Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
