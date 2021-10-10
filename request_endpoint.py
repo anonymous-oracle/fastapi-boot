@@ -17,7 +17,7 @@
 import requests
 
 # URL = sys.argv[1]
-URL = "http://127.0.0.1:8000/items/5194194?q=query"
+URL = "http://127.0.0.1:8000/items4?q=new_item&q=new_item2&q=new_item3"
 
 # FILEPATH = sys.argv[2]
 # REQUEST_TYPE = sys.argv[3]
@@ -49,5 +49,6 @@ body = {
 # files = {"file": (FILEPATH, open(FILEPATH, "rb"))}
 
 # send request body data to the json argument always
-r = requests.post(URL, json=body)
+# r = requests.post(URL, json=body)
+r = requests.get(URL)
 print(r.json())

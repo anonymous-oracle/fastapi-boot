@@ -31,6 +31,8 @@ starlette
 toml
 typing-extensions
 uvicorn
+gunicorn
 virtualenv
 virtualenv-clone
 Werkzeug
+passlib[bcrypt]
