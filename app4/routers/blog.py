@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 from typing import List
 from fastapi import status, Response, HTTPException
-from .. import database, schemas, models
+
+from app4.utils.blog import create_blog, destroy_blog
+from .. import schemas, models
 
 router = APIRouter(tags=["BLOGS"], prefix="/blog")
 
@@ -12,7 +14,7 @@ router = APIRouter(tags=["BLOGS"], prefix="/blog")
     response_model=List[schemas.ResponseBlog],
 )
 async def all():
-    return database.db.query(models.Blog).all()
+    return models.db.query(models.Blog).all()
 
 
 @router.post(
@@ -20,11 +22,7 @@ async def all():
     status_code=status.HTTP_201_CREATED,
 )
 async def create(request: schemas.Blog):
-    new_blog = schemas.Blog(title=request.title, body=request.body, user_id=1)
-    database.db.add(new_blog)
-    database.db.commit()
-    database.db.refresh(new_blog)
-    return new_blog
+    return create_blog(title=request.title, body=request.body)
 
 
 @router.get(
@@ -33,7 +31,7 @@ async def create(request: schemas.Blog):
     response_model=schemas.ResponseBlog,
 )
 async def show(id, response: Response):
-    blog = database.db.query(database.Blog).filter(database.Blog.id == id).first()
+    blog = models.db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"No blog with id: {id}"
@@ -48,11 +46,7 @@ async def show(id, response: Response):
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_blog(id):
-    database.db.query(database.Blog).filter(database.Blog.id == id).delete(
-        synchronize_session=False
-    )
-    database.db.commit()
-    return True
+    return destroy_blog(id)
 
 
 @router.put(
@@ -60,11 +54,11 @@ async def delete_blog(id):
     status_code=status.HTTP_202_ACCEPTED,
 )
 async def update(id: int, request: schemas.Blog):
-    blog = database.db.query(database.Blog.id == id)
+    blog = models.db.query(models.Blog.id == id)
     if not blog.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog not found for id: {id}"
         )
     blog.update({"title": request.title, "body": request.body})
-    database.db.commit()
+    models.db.commit()
     return True

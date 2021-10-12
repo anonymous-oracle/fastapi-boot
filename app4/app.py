@@ -3,8 +3,9 @@ from fastapi import FastAPI, status
 from fastapi.exceptions import HTTPException
 from .hashing import hash
 from .schemas import *
-from .database import db
+from .models import db, Base, engine_
 from .routers import blog, user
+
 
 
 app = FastAPI()

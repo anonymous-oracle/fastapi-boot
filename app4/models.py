@@ -1,8 +1,18 @@
 from sqlalchemy.sql.schema import ForeignKey
-from .database import Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session
+
+DATABASE_URI = "sqlite:///./blog.db"
+
+engine_ = create_engine(DATABASE_URI, connect_args={"check_same_thread": False})
+
+
+Base = declarative_base()
+db = Session(bind=engine_, autocommit=False, autoflush=False)
 
 
 class Blog(Base):
@@ -24,3 +34,7 @@ class User(Base):
     password = Column(String, nullable=False)
 
     blogs = relationship("Blog", back_populates="user")
+
+
+if __name__ == "__main__":
+    Base.metadata.create_all(engine_)
