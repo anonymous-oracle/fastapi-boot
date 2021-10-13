@@ -36,3 +36,4 @@ virtualenv
 virtualenv-clone
 Werkzeug
 passlib[bcrypt]
+python-jose[cryptography]
