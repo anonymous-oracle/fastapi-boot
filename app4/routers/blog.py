@@ -1,8 +1,7 @@
 from fastapi import APIRouter
 from typing import List
-from fastapi import status, Response, HTTPException
 
-from app4.utils.blog import create_blog, destroy_blog
+from app4.utils.blog import create_blog, destroy_blog, get_blog, update_blog
 from .. import schemas, models
 
 router = APIRouter(tags=["BLOGS"], prefix="/blog")
@@ -10,7 +9,7 @@ router = APIRouter(tags=["BLOGS"], prefix="/blog")
 
 @router.get(
     "/",
-    status_code=status.HTTP_200_OK,
+    status_code=200,
     response_model=List[schemas.ResponseBlog],
 )
 async def all():
@@ -19,46 +18,32 @@ async def all():
 
 @router.post(
     "/",
-    status_code=status.HTTP_201_CREATED,
+    status_code=201,
 )
 async def create(request: schemas.Blog):
-    return create_blog(title=request.title, body=request.body)
+    return await create_blog(title=request.title, body=request.body)
 
 
 @router.get(
     "/{id}",
-    status_code=status.HTTP_200_OK,
+    status_code=200,
     response_model=schemas.ResponseBlog,
 )
-async def show(id, response: Response):
-    blog = models.db.query(models.Blog).filter(models.Blog.id == id).first()
-    if not blog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"No blog with id: {id}"
-        )
-        # response.status_code = status.HTTP_404_NOT_FOUND
-        # return {"detail": f"No blog with id: {id}"}
-    return blog
+async def show(id):
+    return await get_blog(id)
 
 
 @router.delete(
     "/{id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=202,
 )
 async def delete_blog(id):
-    return destroy_blog(id)
+    return await destroy_blog(id)
 
 
 @router.put(
     "/{id}",
-    status_code=status.HTTP_202_ACCEPTED,
+    status_code=202,
 )
 async def update(id: int, request: schemas.Blog):
-    blog = models.db.query(models.Blog.id == id)
-    if not blog.first():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog not found for id: {id}"
-        )
-    blog.update({"title": request.title, "body": request.body})
-    models.db.commit()
-    return True
+    return await update_blog(id, request.title, request.body)

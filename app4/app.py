@@ -1,13 +1,10 @@
-from typing import List
-from fastapi import FastAPI, status
-from fastapi.exceptions import HTTPException
-from .hashing import hash
-from .schemas import *
-from .models import db, Base, engine_
-from .routers import blog, user
-
+from fastapi import FastAPI
+from .routers.blog import router as blog_router
+from .routers.user import router as user_router
+from .routers.authentication import router as auth_router
 
 
 app = FastAPI()
-app.include_router(blog.router)
-app.include_router(user.router)
+app.include_router(blog_router)
+app.include_router(user_router)
+app.include_router(auth_router)

@@ -41,7 +41,19 @@ class ResponseUser(BaseModel):
 class ResponseBlog(BaseModel):
 
     title: str
-    user: ResponseUser
+    user: ResponseUser = None
+
+    class Config:
+        orm_mode = True
+
+
+class Login(BaseModel):
+    username: str
+    password: str
+
+
+class ResponseLogin(BaseModel):
+    username: str
 
     class Config:
         orm_mode = True
