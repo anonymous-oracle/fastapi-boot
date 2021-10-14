@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 from typing import List
 
+from fastapi.params import Depends
+from app4.oauth2 import get_current_user
+
 from app4.utils.blog import create_blog, destroy_blog, get_blog, update_blog
 from .. import schemas, models
 
@@ -12,7 +15,8 @@ router = APIRouter(tags=["BLOGS"], prefix="/blog")
     status_code=200,
     response_model=List[schemas.ResponseBlog],
 )
-async def all():
+# the Depends method will use the get_current_user to get the username of the current request
+async def all(current_user: schemas.User = Depends(get_current_user)):
     return models.db.query(models.Blog).all()
 
 
