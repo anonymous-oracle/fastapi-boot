@@ -15,7 +15,7 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()):
     )
     if user == False:
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    user_obj = {"id": user.id, "username": user.username, "password": user.password}
+    user_obj = {"id": user.id, "username": user.username}
     return get_token(user_obj)
 
 
@@ -32,6 +32,3 @@ async def get_user_me(user: User = Depends(get_current_user)):
 @app.get("/users/{username}", response_model=UserResponse)
 async def get_user(username: str):
     return await read_user(username=username)
-
-
-    
