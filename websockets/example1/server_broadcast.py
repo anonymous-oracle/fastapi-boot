@@ -20,15 +20,19 @@ async def echo(websocket, path):
             print("Received message from client: " + message)
             # Send a response to all connected clients except sender
             for conn in connected:
+                # since this is a broadcast server, send the message to everyone except the sender
                 if conn != websocket:
                     await conn.send("Someone said: " + message)
     # Handle disconnecting clients
     except websockets.exceptions.ConnectionClosed as e:
         print("A client just disconnected")
     finally:
+        # if connection is closed, remove from the set of connections so that the broadcast does not happen to this client connection
         connected.remove(websocket)
 
 
 # Start the server
-start_server = websockets.serve(echo, "localhost", PORT)
-asyncio.get_event_loop().run_until_comple
+start_server = websockets.serve(echo, "127.0.0.1", PORT)
+asyncio.get_event_loop().run_until_complete(start_server)
+# server stays alive and does not stop working
+asyncio.get_event_loop().run_forever()
